@@ -1,0 +1,97 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+-- URL do repositório com a whitelist
+local whitelistURL = "https://raw.githubusercontent.com/jonatasnatanael2010-ai/Wl/refs/heads/main/Wl"
+
+-- Puxa a whitelist do seu repositório
+local success, whitelist = pcall(function()
+    return loadstring(game:HttpGet(whitelistURL, true))()
+end)
+
+if not success or type(whitelist) ~= "table" then
+    warn("Não foi possível carregar a whitelist ou formato inválido. Negando acesso.")
+    Player:Kick("Erro ao carregar whitelist.")
+    return
+end
+
+-- Checa se o jogador está na whitelist
+local allowed = false
+for _, name in ipairs(whitelist) do
+    if name == Player.Name then
+        allowed = true
+        break
+    end
+end
+
+if not allowed then
+    Player:Kick("Você não está na whitelist para jogar neste servidor.")
+    return
+end
+
+-- Se passou na whitelist, continua com o menu
+-- Cria a tela inicial
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LanguageSelector"
+screenGui.Parent = game.CoreGui
+screenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 250, 0, 220)
+frame.Position = UDim2.new(0.5, -125, 0.5, -110)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0, 12)
+frameCorner.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "Select Language"
+title.TextColor3 = Color3.fromRGB(25, 25, 122)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.Parent = frame
+
+local function createButton(text, order, callback)
+    local spacing = 10
+    local buttonHeight = 35
+    local topOffset = 60
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 200, 0, buttonHeight)
+    btn.Position = UDim2.new(0.5, -100, 0, topOffset + (order - 1) * (buttonHeight + spacing))
+    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 122)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Text = text
+    btn.Font = Enum.Font.SourceSans
+    btn.TextSize = 20
+    btn.Parent = frame
+    btn.MouseButton1Click:Connect(callback)
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = btn
+end
+
+local function openEnglish()
+    screenGui:Destroy()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/556ii/zz/refs/heads/main/ENGLISH", true))()
+end
+
+local function openSpanish()
+    screenGui:Destroy()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/556ii/zzz/refs/heads/main/ESPANOL", true))()
+end
+
+local function openPortuguese()
+    screenGui:Destroy()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/556ii/zzzz/refs/heads/main/PORTUGUES", true))()
+end
+
+createButton("English", 1, openEnglish)
+createButton("Español", 2, openSpanish)
+createButton("Português", 3, openPortuguese)
